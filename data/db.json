@@ -1,0 +1,8 @@
+[
+  { "id": 1, "title": "Node course", "price": 6000 },
+  { "id": 2, "title": "React course", "price": 3000 },
+  { "id": 3, "title": "java", "price": 5005 },
+  { "id": 4, "title": ".net bootcamp", "price": 300 },
+  { "id": 5, "title": "ruby", "price": 15000 },
+  { "id": 6, "title": "assembly", "price": 300.5 }
+]

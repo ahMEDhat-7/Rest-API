@@ -1,0 +1,22 @@
+{
+  "name": "web-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "run:db": "nodemon db.js",
+    "run:app": "nodemon app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "morgan": "^1.10.0",
+    "nodemon": "^3.1.7"
+  },
+  "dependencies": {
+    "express": "^4.21.1",
+    "express-validator": "^7.2.0",
+    "mysql": "^2.18.1"
+  }
+}
