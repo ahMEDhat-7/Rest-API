@@ -26,78 +26,44 @@ const getSingleCourse = asyncWrapper(async (req, res) => {
   return res.json({ status: httpStatusText.SUCCESS, data: { course } });
 });
 
-// try {
+const addCourse = asyncWrapper(async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res
+      .status(400)
+      .json({ status: httpStatusText.FAIL, message: errors.array() });
+  }
+  const newCourse = await Course.insertMany(req.body);
+  res
+    .status(201)
+    .json({ status: httpStatusText.SUCCESS, data: { newCourse: newCourse } });
+});
 
-// } catch (error) {
-//   return res.status(400).json({
-//     status: httpStatusText.ERROR,
-//     data: { course: null },
-//     message: error.message,
-//   });
-// }
-
-const addCourse = async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res
-        .status(400)
-        .json({ status: httpStatusText.FAIL, message: errors.array() });
+const updateCourse = asyncWrapper(async (req, res) => {
+  const courseId = req.params.id;
+  const course = await Course.updateOne(
+    { _id: courseId },
+    {
+      $set: { ...req.body },
     }
-    const newCourse = await Course.insertMany(req.body);
-    res
-      .status(201)
-      .json({ status: httpStatusText.SUCCESS, data: { newCourse: newCourse } });
-  } catch (error) {
-    return res.status(400).json({
-      status: httpStatusText.ERROR,
-      data: { course: null },
-      message: error.message,
-    });
-  }
-};
+  );
+  return res.status(200).json({
+    status: httpStatusText.SUCCESS,
+    data: { updatedCourse: course },
+  });
+});
 
-const updateCourse = async (req, res) => {
-  try {
-    const courseId = req.params.id;
-    const course = await Course.updateOne(
-      { _id: courseId },
-      {
-        $set: { ...req.body },
-      }
-    );
-    return res.status(200).json({
-      status: httpStatusText.SUCCESS,
-      data: { updatedCourse: course },
-    });
-  } catch (error) {
-    return res.status(400).json({
-      status: httpStatusText.ERROR,
+const deleteCourse = asyncWrapper(async (req, res) => {
+  const course = await Course.findByIdAndDelete(req.params.id);
+  if (!course) {
+    return res.status(404).json({
+      status: httpStatusText.FAIL,
       data: { course: null },
-      message: error.message,
+      message: "course not found",
     });
   }
-};
-
-const deleteCourse = async (req, res) => {
-  try {
-    const course = await Course.findByIdAndDelete(req.params.id);
-    if (!course) {
-      return res.status(404).json({
-        status: httpStatusText.FAIL,
-        data: { course: null },
-        message: "course not found",
-      });
-    }
-    return res.status(200).json({ status: httpStatusText.SUCCESS, data: null });
-  } catch (error) {
-    return res.status(400).json({
-      status: httpStatusText.ERROR,
-      data: { course: null },
-      message: error.message,
-    });
-  }
-};
+  return res.status(200).json({ status: httpStatusText.SUCCESS, data: null });
+});
 
 module.exports = {
   getAllCourses,
