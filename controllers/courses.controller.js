@@ -41,20 +41,16 @@ const updateCourse = async (req, res) => {
   }
 };
 
-const deleteCourse = (req, res) => {
-  const id = +req.params.id;
-  let course = courses.find((course) => course.id === id);
+const deleteCourse = async (req, res) => {
+ try {
+  const course = await Course.findByIdAndDelete(req.params.id);
   if (!course) {
     return res.status(404).json({ message: "course not found" });
   }
-  //courses.splice(id-1,1);
-  courses = courses.filter((course) => course.id !== id);
-  fs.writeFile("./data/db.json", JSON.stringify(courses), "utf-8", (err) => {
-    if (err) {
-      throw err;
-    }
-  });
-  res.status(200).json(courses);
+  return res.status(200).json(course);
+ } catch (error) {
+  return res.status(400).json(error);
+ }
 };
 
 module.exports = {
