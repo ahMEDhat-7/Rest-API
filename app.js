@@ -1,23 +1,33 @@
-const express = require('express');
+require("dotenv").config();
+const express = require("express");
 const app = express();
-const mongoose = require('mongoose');
-const logger = require('morgan');
-const coursesRouter = require('./routes/courses.route'); 
-const usersRouter = require('./routes/users.route');
+const mongoose = require("mongoose");
+const cors = require("cors");
+const handlers = require("./middlewares/handlers.js");
+const logger = require("morgan");
+const coursesRouter = require("./routes/courses.route");
+const usersRouter = require("./routes/users.route");
+const httpStatusText = require("./utils/httpStatusText");
 
-const connStr = "mongodb://127.0.0.1:27017/api-db";
+mongoose
+  .connect(process.env.MONGO_CONN)
+  .then(() => {
+    console.log("DB connected.");
+  })
+  .catch(console.log);
 
-mongoose.connect(connStr).then(
-  console.log("DB connected.") 
-).catch(console.log);
-
-app.use(logger('dev'));
+app.use(cors());
+app.use(logger("dev"));
 app.use(express.json());
 
-app.use('/api/courses',coursesRouter);
-app.use('/api/users',usersRouter);
+app.use("/api/courses", coursesRouter);
+app.use("/api/users", usersRouter);
 
-app.listen(3000,()=>{
+app.all("*", handlers.notFoundHandler);
+app.use((error, req, res, next) => {
+  res.status(500).json({ status: httpStatusText.ERROR, message: error.message });
+});
+
+app.listen(process.env.PORT || 3000, () => {
   console.log("Listenning...");
-  
 });
