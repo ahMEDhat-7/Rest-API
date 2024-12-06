@@ -1,6 +1,6 @@
 const fs = require("fs");
 const Course = require("../models/courses.model");
-const { validationResult } = require("express-validator");
+const { validationResult, body } = require("express-validator");
 
 const getAllCourses = async (req, res) => {
   const courses = await Course.find();
@@ -13,7 +13,7 @@ const getSingleCourse = async (req, res) => {
     if (!course) {
       return res.status(404).json({ message: "course not found" });
     }
-    res.json(course);
+    return res.json(course);
   } catch (err) {
     return res.status(400).json({ message: "Invalid Obj Id" });
   }
@@ -29,19 +29,16 @@ const addCourse = async (req, res) => {
   res.status(201).json(newCourse);
 };
 
-const updateCourse = (req, res) => {
-  const id = +req.params.id;
-  let course = courses.find((cor) => cor.id === id);
-  if (!course) {
-    return res.status(404).json({ message: "course not found" });
+const updateCourse = async (req, res) => {
+  try {
+    const courseId = req.params.id;
+    const course = await Course.updateOne({_id:courseId}, {
+      $set: { ...req.body },
+    });
+    return res.status(200).json(course);
+  } catch (error) {
+    return res.status(400).json({ message: "Invalid Obj Id" }, error);
   }
-  courses[id - 1] = { ...course, ...req.body };
-  fs.writeFile("./data/db.json", JSON.stringify(courses), "utf-8", (err) => {
-    if (err) {
-      throw err;
-    }
-  });
-  res.status(200).json(courses[id - 1]);
 };
 
 const deleteCourse = (req, res) => {
