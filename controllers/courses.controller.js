@@ -7,6 +7,7 @@ const getAllCourses = async (req, res) => {
   res.json(courses);
 };
 
+// get single course
 const getSingleCourse = async (req, res) => {
   try {
     const course = await Course.findById(req.params.id);
