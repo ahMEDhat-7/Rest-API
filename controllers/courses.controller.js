@@ -4,7 +4,7 @@ const { validationResult } = require("express-validator");
 // get all courses
 const getAllCourses = async (req, res) => {
   const courses = await Course.find();
-  res.json(courses);
+  res.status(200).json({ status: "success", data: { courses } });
 };
 
 // get single course
@@ -14,7 +14,7 @@ const getSingleCourse = async (req, res) => {
     if (!course) {
       return res.status(404).json({ message: "course not found" });
     }
-    return res.json(course);
+    return res.json({ status: "success", data: { course } });
   } catch (err) {
     return res.status(400).json({ message: "Invalid Obj Id" });
   }
@@ -27,7 +27,7 @@ const addCourse = async (req, res) => {
       return res.status(400).json(errors.array());
     }
     const newCourse = await Course.insertMany(req.body);
-    res.status(201).json(newCourse);
+    res.status(201).json({ status: "success", data: { newCourse: newCourse } });
   } catch (error) {
     return res.status(400).json(error);
   }
@@ -42,7 +42,9 @@ const updateCourse = async (req, res) => {
         $set: { ...req.body },
       }
     );
-    return res.status(200).json(course);
+    return res
+      .status(200)
+      .json({ status: "success", data: { updatedCourse: course } });
   } catch (error) {
     return res.status(400).json({ message: "Invalid Obj Id" }, error);
   }
@@ -54,7 +56,9 @@ const deleteCourse = async (req, res) => {
     if (!course) {
       return res.status(404).json({ message: "course not found" });
     }
-    return res.status(200).json(course);
+    return res
+      .status(200)
+      .json({ status: "success", data: { deletedCourse: course } });
   } catch (error) {
     return res.status(400).json(error);
   }
