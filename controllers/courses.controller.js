@@ -1,8 +1,10 @@
 const fs = require('fs');
+const Course = require('../models/courses.model');
 const {validationResult} = require('express-validator');
-let courses = JSON.parse(fs.readFileSync('./data/db.json','utf-8'));
 
-const getAllCourses = (req, res) => {
+
+const getAllCourses = async (req, res) => {
+  const courses = await Course.find();
   res.json(courses);
 };
 
