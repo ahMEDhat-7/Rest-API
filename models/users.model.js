@@ -1,14 +1,14 @@
 const mongoose = require("mongoose");
 
-const courseSchema = new mongoose.Schema({
-  title: {
+const userSchema = new mongoose.Schema({
+  name: {
     type: String,
     required: true,
   },
-  price: {
+  age: {
     type: Number,
     required: true,
   },
 });
 
-module.exports = mongoose.model("Course", courseSchema);
+module.exports = mongoose.model("User", userSchema);

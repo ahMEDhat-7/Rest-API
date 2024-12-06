@@ -1,5 +1,5 @@
 const Course = require("../models/courses.model");
-const { validationResult, body } = require("express-validator");
+const { validationResult } = require("express-validator");
 
 // get all courses
 const getAllCourses = async (req, res) => {

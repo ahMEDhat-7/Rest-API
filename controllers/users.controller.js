@@ -1,72 +1,61 @@
-const fs = require('fs');
-const {validationResult} = require('express-validator');
-let Users = JSON.parse(fs.readFileSync('./data/users.json','utf-8'));
+const { validationResult } = require("express-validator");
+const User = require("../models/users.model");
 
-const getAllUsers = (req, res) => {
-  res.json(Users);
+const getAllUsers = async (req, res) => {
+  const users = await User.find();
+  res.status(200).json(users);
 };
 
-const getSingleUser = (req, res) => {
-  const id = +req.params.id;
-  const user = Users.find((user) => user.id === id);
-  if (!user) {
-    return res.status(404).json({ message: "user not found" });
-  }
-  res.json(user);
-};
-
-const addUser = (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json(errors.array());
-  }
-
-  let user = { id: Users[Users.length - 1].id + 1, ...req.body };
-  Users.push(user);
-  fs.writeFile("./data/users.json", JSON.stringify(Users), "utf-8", (err) => {
-    if (err) {
-      throw err;
+const getSingleUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "user not found" });
     }
-  });
-  res.status(201).json(user);
+    return res.json(user);
+  } catch (err) {
+    return res.status(400).json({ message: "Invalid Obj Id" });
+  }
 };
 
-const updateUser = (req,res)=>{
-  const id = +req.params.id;
-  let user = Users.find(user=>user.id === id);
-  if (!user) {
-    return res.status(404).json({message:"user not found"});
-  }
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json(errors.array());
-  }
-
-  Users[id-1] = {...user,...req.body};
-  fs.writeFile('./data/users.json',JSON.stringify(Users),'utf-8',(err)=>{
-    if (err) {
-      throw err;
+const addUser = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json(errors.array());
     }
-  });
-  res.status(200).json(Users[id-1]);
- 
+    const newUser = await User.insertMany(req.body);
+    res.status(201).json(newUser);
+  } catch (error) {
+    return res.status(400).json(error);
+  }
 };
 
-const deleteUser = (req,res)=>{
-  const id = +req.params.id;
-  let user = Users.find(user => user.id === id);
-  if (!user) {
-    return res.status(404).json({message:"user not found"});
+const updateUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const user = await User.updateOne(
+      { _id: userId },
+      {
+        $set: { ...req.body },
+      }
+    );
+    return res.status(200).json(user);
+  } catch (error) {
+    return res.status(400).json({ message: "Invalid Obj Id" }, error);
   }
-  //Users.splice(id-1,1);
-  Users = Users.filter(user => user.id !== id);
-  fs.writeFile('./data/users.json',JSON.stringify(Users),'utf-8',(err)=>{
-    if (err) {
-      throw err;
+};
+
+const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "user not found" });
     }
-  });
-  res.status(200).json(Users);
- 
+    return res.status(200).json(user);
+  } catch (error) {
+    return res.status(400).json(error);
+  }
 };
 
 module.exports = {
@@ -74,5 +63,5 @@ module.exports = {
   getSingleUser,
   addUser,
   updateUser,
-  deleteUser
+  deleteUser,
 };
