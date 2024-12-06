@@ -1,9 +1,10 @@
 const { validationResult } = require("express-validator");
 const User = require("../models/users.model");
+const httpStatusText = require('../utils/httpStatusText');
 
 const getAllUsers = async (req, res) => {
   const users = await User.find();
-  res.status(200).json({ status: "success", data: { users } });
+  res.status(200).json({ status: httpStatusText.SUCCESS, data: { users } });
 };
 
 const getSingleUser = async (req, res) => {
@@ -12,7 +13,7 @@ const getSingleUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "user not found" });
     }
-    return res.json({ status: "success", data: { user } });
+    return res.json({ status: httpStatusText.SUCCESS, data: { user } });
   } catch (err) {
     return res.status(400).json({ message: "Invalid Obj Id" });
   }
@@ -25,7 +26,7 @@ const addUser = async (req, res) => {
       return res.status(400).json(errors.array());
     }
     const newUser = await User.insertMany(req.body);
-    res.status(201).json({ status: "success", data: { NewUser: newUser } });
+    res.status(201).json({ status: httpStatusText.SUCCESS, data: { NewUser: newUser } });
   } catch (error) {
     return res.status(400).json(error);
   }
@@ -42,7 +43,7 @@ const updateUser = async (req, res) => {
     );
     return res
       .status(200)
-      .json({ status: "success", data: { updatedUser: user } });
+      .json({ status: httpStatusText.SUCCESS, data: { updatedUser: user } });
   } catch (error) {
     return res.status(400).json({ message: "Invalid Obj Id" }, error);
   }
@@ -56,7 +57,7 @@ const deleteUser = async (req, res) => {
     }
     return res
       .status(200)
-      .json({ status: "success", data: { deletedUser: user } });
+      .json({ status: httpStatusText.SUCCESS, data: null });
   } catch (error) {
     return res.status(400).json(error);
   }
