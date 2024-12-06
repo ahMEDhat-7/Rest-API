@@ -8,9 +8,8 @@ const usersRouter = require('./routes/users.route');
 const connStr = "mongodb://127.0.0.1:27017/api-db";
 
 mongoose.connect(connStr).then(
-  console.log("DB connected.")
-  
-);
+  console.log("DB connected.") 
+).catch(console.log);
 
 app.use(logger('dev'));
 app.use(express.json());
