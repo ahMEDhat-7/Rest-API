@@ -2,7 +2,7 @@
 
 module.exports = (asyncFn)=>{
   return (req,res,next)=>{
-    asyncFn(req,res).catch((error)=>{
+    asyncFn(req,res,next).catch((error)=>{
       next(error);
     });
   };

@@ -24,8 +24,17 @@ app.use("/api/courses", coursesRouter);
 app.use("/api/users", usersRouter);
 
 app.all("*", handlers.notFoundHandler);
-app.use((error, req, res, next) => {
-  res.status(500).json({ status: httpStatusText.ERROR, message: error.message });
+
+app.use((err, req, res, next) => {
+  
+  res.status(err.statusCode || 500).json({
+    status: httpStatusText.ERROR,
+    error:{
+      statusCode : err.statusCode,
+      message: err.name
+    },
+  });
+
 });
 
 app.listen(process.env.PORT || 3000, () => {
