@@ -2,7 +2,7 @@ const Course = require("../models/courses.model");
 const { validationResult } = require("express-validator");
 const httpStatusText = require("../utils/httpStatusText");
 const asyncWrapper = require("../middlewares/asyncWrapper");
-const NotFound = require("../error/error");
+const customError = require("../error/error");
 
 const getAllCourses = async (req, res) => {
   const query = req.query;
@@ -16,19 +16,15 @@ const getAllCourses = async (req, res) => {
 const getSingleCourse = asyncWrapper(async (req, res, next) => {
   const course = await Course.findById(req.params.id);
   if (!course) {
-    return next(new NotFound());
+    return next(new customError("Not Found",404,httpStatusText.FAIL));
   }
   return res.json({ status: httpStatusText.SUCCESS, data: { course } });
 });
 
-const addCourse = asyncWrapper(async (req, res) => {
+const addCourse = asyncWrapper(async (req, res,next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(404).json({
-      status: httpStatusText.FAIL,
-      data: { course: null },
-      message: "course not found",
-    });
+    return next(new customError(errors.array(),400,httpStatusText.FAIL));
   }
   const newCourse = await Course.insertMany(req.body);
   res
@@ -53,11 +49,7 @@ const updateCourse = asyncWrapper(async (req, res) => {
 const deleteCourse = asyncWrapper(async (req, res, next) => {
   const course = await Course.findByIdAndDelete(req.params.id);
   if (!course) {
-    return res.status(404).json({
-      status: httpStatusText.FAIL,
-      data: { course: null },
-      message: "course not found",
-    });
+    return next(new customError("Not Found",404,httpStatusText.FAIL));
   }
   return res.status(200).json({ status: httpStatusText.SUCCESS, data: null });
 });

@@ -31,7 +31,7 @@ app.use((err, req, res, next) => {
     status: httpStatusText.ERROR,
     error:{
       statusCode : err.statusCode,
-      message: err.name
+      message: err.message
     },
   });
 
