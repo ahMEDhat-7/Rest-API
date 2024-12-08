@@ -18,10 +18,7 @@ const validationUsersSchema = () => {
     body("name")
       .notEmpty()
       .withMessage("please provide user name"),
-    body("age")
-      .notEmpty()
-      .isInt({max:50,min:18})
-      .withMessage("you are under age you must be in [18-50]"),
+
   ];
 }
 

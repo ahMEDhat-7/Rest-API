@@ -6,7 +6,7 @@ const router = express.Router();
 router
   .route("/") //    /api/users
   .get(usersController.getAllUsers);
-  // .post(validationUsersSchema(), usersController.addUser);
+// .post(validationUsersSchema(), usersController.addUser);
 
 router
   .route("/:id")
@@ -14,7 +14,7 @@ router
   .patch(validationUsersSchema(), usersController.updateUser)
   .delete(usersController.deleteUser);
 
-router.route("/register").post(validationUsersSchema(),usersController.addUser);
+router.route("/register").post(usersController.addUser);
 
 router.route("/login").post(usersController.getSingleUser);
 
