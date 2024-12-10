@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   username: { type: String, unique: true, sparse: true }, // Add `sparse` to allow multiple nulls
+  token: { type: String },
 });
 
 module.exports = mongoose.model("User", userSchema);
-  

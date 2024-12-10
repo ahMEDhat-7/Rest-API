@@ -2,10 +2,11 @@ const express = require("express");
 const { validationUsersSchema } = require("../middlewares/validationSchema");
 const usersController = require("../controllers/users.controller");
 const router = express.Router();
+const verifyToken = require('../middlewares/verifyToken');
 
 router
   .route("/") //    /api/users
-  .get(usersController.getAllUsers);
+  .get(verifyToken,usersController.getAllUsers);
 // .post(validationUsersSchema(), usersController.addUser);
 
 router
@@ -16,6 +17,6 @@ router
 
 router.route("/register").post(usersController.addUser);
 
-router.route("/login").post(usersController.getSingleUser);
+router.route("/login").post(verifyToken,usersController.login);
 
 module.exports = router;

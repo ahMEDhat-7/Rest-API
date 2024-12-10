@@ -26,15 +26,13 @@ app.use("/api/users", usersRouter);
 app.all("*", handlers.notFoundHandler);
 
 app.use((err, req, res, next) => {
-  
   res.status(err.statusCode || 500).json({
-    status: httpStatusText.ERROR,
-    error:{
-      statusCode : err.statusCode,
-      message: err.message
+    status: err.statusText,
+    error: {
+      statusCode: err.statusCode,
+      message: err.message,
     },
   });
-
 });
 
 app.listen(process.env.PORT || 3000, () => {
